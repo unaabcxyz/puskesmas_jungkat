@@ -1,0 +1,8 @@
+.cont_sidebar_icon {
+  margin-top: 0.5%;
+  position: absolute;
+  width: 37px;
+  height: 37px;
+  z-index: 3;
+  background-color:  #7469B6;
+}

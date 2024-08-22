@@ -1,0 +1,13 @@
+@media screen and (max-width:480px) {
+  .el_ipt{
+    padding:0 3%;
+    height: 35px;
+    font-size: 12px;
+  }
+  .el_ipt[type='text']{
+      font-size: 12px;
+  }
+  .label_ipt{
+    font-size: 12px;
+}
+} 

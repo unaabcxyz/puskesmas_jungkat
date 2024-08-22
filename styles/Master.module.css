@@ -1,0 +1,23 @@
+.box_header{
+  height:9%;
+   background-color: white;
+}
+.cont_sidebar_icon {
+   margin-top: 0.5%;
+   position: absolute;
+   width: 37px;
+   height: 37px;
+   background-color:  #7469B6;
+}
+.sidebar_box{
+   height: 100%;
+   background-color: #E0AED0;
+}
+.text_menu{
+   font-size: 15px;
+   display:blcok;
+}
+.icon_menu_sidebar{
+   width: 20px;
+   height:  20px;
+}
