@@ -33,7 +33,7 @@ function DataRiwayat({formValue,listRiwayat,matches}){
     });
     return promise;
   }
-  const exportExcelTrigger=()=>{
+  const exportExcelTrigger=(event)=>{
     var m;
     // swalLoadingFunc();
     logo.then(result=>{
@@ -41,14 +41,14 @@ function DataRiwayat({formValue,listRiwayat,matches}){
      });
     setTimeout(()=>{
        exportExcelFile(m)
-    },4000)
+    },15000)
 }
   const exportExcelFile=(logo)=>{
     const workbook= new ExcelJS.Workbook();
     var sheet=[];
     sheet[0] = workbook.addWorksheet(`jadwal-${0+1}`,{views:[ {showGridLines:false} ]})
     // sheet[0].addImage(imageId,'D2:D5');
-    // console.log(logo)
+    console.log(logo)
     const imageNew=logo.split(';');
     const imageId = workbook.addImage({
       base64:"data:image/png;"+imageNew[1].toString(),

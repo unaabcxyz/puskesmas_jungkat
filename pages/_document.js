@@ -4,7 +4,7 @@ export default function Document() {
   return (
     <Html lang="en">
       <Head />
-      <title>Pendaftaran Rumah Sakit Admin
+      <title>Pendaftaran Puskesmas Rawat Inap Jungkat
       </title>
       <body>
         <Main />
