@@ -39,6 +39,13 @@ const  MainKelolaRiwayat=()=>{
   const listRiwayat = useGlobalListRiwayat();
   const [startDate, setStartDate] = useState(new Date());
   const [endData, setEndDate]=useState(new Date());
+  const [togglePelayanan,setTogglePelayanan]=useState({
+      rawat_inap:false,
+      rawat_jalan:false,
+      rujuk:false
+  })
+  const [pencarian,setPencarian]=useState('')
+  const [pelayanan,setPelayanan]=useState("")
   useEffect(()=>{
     if(width>480){
       setMatches(false)
@@ -64,6 +71,14 @@ const  MainKelolaRiwayat=()=>{
       }
     }
   },[user])
+  useEffect(()=>{
+    var date=startDate;
+    var  tanggalArray=date.toString().split(' ');
+    tanggalArray[1]=convertMouthToNumber(tanggalArray[1]);
+    setFormValue({...formValue,['tanggal_dari']:tanggalArray[1].toString()+'-'+tanggalArray[2].toString()+'-'+tanggalArray[3].toString(),
+                               ['tanggal_ke']:tanggalArray[1].toString()+'-'+tanggalArray[2].toString()+'-'+tanggalArray[3].toString()
+    });
+  },[])
   if(!loadingAuth && !loggedIn){
     Swal.close();
     router.push('/');
@@ -73,7 +88,9 @@ const  MainKelolaRiwayat=()=>{
   })
   const  [formValue,setFormValue]=useState({
     tanggal_dari:'',
-    tanggal_ke:''
+    tanggal_ke:'',
+    pencarian:'',
+    pelayanan:''
   })
   const toggleSideBar2=useRef(true);
   const toggleSidebarFunc=()=>{
@@ -148,7 +165,67 @@ const  MainKelolaRiwayat=()=>{
             break;
     }
     return result;
-}
+  }
+  const togglePelayananFunc=(event)=>{
+    var id = event.target.id;
+    var toggle=false;
+    if(id=='rawat_inap'){
+        if(togglePelayanan.rawat_inap==true){
+          setTogglePelayanan({...togglePelayanan,[id]:false,
+                                                 ['rawat_jalan']:false,
+                                                ['rujuk']:false
+          })
+          console.log(id.replace('_',' '))
+          setPelayanan('')
+        }else{
+          setTogglePelayanan({...togglePelayanan,[id]:true,
+                            ['rawat_jalan']:false,
+                            ['rujuk']:false
+          })
+          setPelayanan(id.replace('_',' '))
+          toggle=true;
+        
+        }
+    }else if(id=='rawat_jalan'){
+      if(togglePelayanan.rawat_jalan==true){
+        setTogglePelayanan({...togglePelayanan,[id]:false,
+                                               ['rawat_inap']:false,
+                                              ['rujuk']:false
+        })
+        setPelayanan('')
+      }else{
+        setTogglePelayanan({...togglePelayanan,[id]:true,
+                          ['rawat_inap']:false,
+                          ['rujuk']:false
+        })
+        setPelayanan(id.replace('_',' '))
+        toggle=true;
+      }
+    }else{  
+      if(togglePelayanan.rujuk==true){
+        setTogglePelayanan({...togglePelayanan,[id]:false,
+                                               ['rawat_inap']:false,
+                                              ['rawat_jalan']:false
+        })
+        setPelayanan('')
+      }else{
+        setTogglePelayanan({...togglePelayanan,[id]:true,
+                          ['rawat_inap']:false,
+                          ['rawat_jalan']:false
+        })
+        setPelayanan(id.replace('_',' '))
+        toggle=true;
+    
+      }
+    }
+    if(toggle ==true){ 
+      setFormValue({...formValue,['pelayanan']:id.replace('_',' ')})
+    }else{
+      setFormValue({...formValue,['pelayanan']:''})
+    }
+   
+      
+  }
   return(
     admin.id>0?(
       <div>
@@ -170,6 +247,35 @@ const  MainKelolaRiwayat=()=>{
                 <label htmlFor="nama-signup" className={"form-label fw-medium  w-100 "+styles.label_ipt}>Ke Tanggal</label>
                 <DatePicker className="form-control" selected={endData} onChange={(date) => changeTanggal(date,'tanggal_ke')} name="tes"/>
                 <hr/>
+              </div>
+              <div className="mb-2 w-100">
+                <div className="w-50 d-inline-block">
+                  <label htmlFor="nama-signup" className={"form-label fw-medium  w-100 "+styles.label_ipt}>Pencarian Pelayanan : <span>{pelayanan}</span></label>
+                  <div className="d-inline-block me-2">
+                      {
+                        togglePelayanan.rawat_inap==false?(<button className={"btn btn-outline-primary  "} id="rawat_inap" onClick={togglePelayananFunc}>rawat inap</button>
+                        ):( <button className={"btn btn-primary  "} id="rawat_inap" onClick={togglePelayananFunc}>rawat inap</button>)
+                      }
+                   
+                  </div>
+                  <div className="d-inline-block me-2">
+                    {
+                        togglePelayanan.rawat_jalan==false?(<button className={"btn btn-outline-success  "} id="rawat_jalan" onClick={togglePelayananFunc}>rawat jalan</button>
+                        ):( <button className={"btn btn-success  "} id="rawat_jalan" onClick={togglePelayananFunc}>rawat jalan</button>)
+                    }
+                  </div>
+                  <div className="d-inline-block">
+                    {togglePelayanan.rujuk==false?( <button className="btn btn-outline-warning" id="rujuk" onClick={togglePelayananFunc}>Rujuk</button>):(<button className="btn btn-warning" id="rujuk" onClick={togglePelayananFunc}>Rujuk</button>)
+                    }
+                 
+                  </div>
+                </div>
+                <div className="w-50 d-inline-block mb-2">
+                <div className={styles.box_ipt+" ps-2 w-50 d-inline-block"}>
+                  <label htmlFor="nama-signup" className={"form-label fw-medium  w-100 "+styles.label_ipt}>Pencarian Diagnosis</label>
+                  <input type="text" className="form-control" placeholder="Pencarian Diagnosis" value={formValue.pencarian} onChange={(event)=>{setFormValue({...formValue,['pencarian']:event.target.value})}}/>
+                </div>
+              </div>
               </div>
                <DataRiwayat formValue={formValue} listRiwayat={listRiwayat} matches={matches}/>
             </div>

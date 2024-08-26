@@ -27,6 +27,9 @@ function Pasien({pasien,index,matches}){
                 <p style={styleTextTable}>Layanan</p>
               </td>
               <td> 
+                <p style={styleTextTable}>Diagnosis</p>
+              </td>
+              <td> 
                 <p style={styleTextTable}>Status</p>
               </td>
               <td> 
@@ -45,6 +48,26 @@ function Pasien({pasien,index,matches}){
             <td> 
               <p style={styleTextTable}>{pasien.pelayanan}</p>
             </td>
+              {
+                pasien.pelayanan=='poli gizi'?(
+                  <td> 
+                    <p style={styleTextTable}>{pasien.diagnosis_poli_gizi}</p>
+                  </td>
+                ):(pasien.pelayanan=='poli umum'?(
+                  <td> 
+                    <p style={styleTextTable}>{pasien.diagnosis_poli_umum}</p>
+                  </td>
+                ):(pasien.pelayanan=='poli gigi'?(
+                <td> 
+                  <p style={styleTextTable}>{pasien.diagnosis_poli_gigi}</p>
+                </td>):(pasien.pelayanan=='IGD'?(
+                   <td> 
+                    <p style={styleTextTable}>{pasien.diagnosis_igd}</p>
+                 </td>
+                ):( <td> 
+                  <p style={styleTextTable}>{pasien.diagnosis_poli_kiakb}</p>
+                </td>))))
+              }
             <td> 
               <p style={styleTextTable}>{pasien.status}</p>
             </td>
@@ -65,6 +88,26 @@ function Pasien({pasien,index,matches}){
                 <td> 
                    <p style={styleTextTable}>{pasien.pelayanan}</p>
                 </td>
+                {
+                pasien.pelayanan=='poli gizi'?(
+                  <td> 
+                    <p style={styleTextTable}>{pasien.diagnosis_poli_gizi}</p>
+                  </td>
+                ):(pasien.pelayanan=='poli umum'?(
+                  <td> 
+                    <p style={styleTextTable}>{pasien.diagnosis_poli_umum}</p>
+                  </td>
+                ):(pasien.pelayanan=='poli gigi'?(
+                <td> 
+                  <p style={styleTextTable}>{pasien.diagnosis_poli_gigi}</p>
+                </td>):(pasien.pelayanan=='IGD'?(
+                   <td> 
+                    <p style={styleTextTable}>{pasien.diagnosis_igd}</p>
+                 </td>
+                ):( <td> 
+                  <p style={styleTextTable}>{pasien.diagnosis_kiakb}</p>
+                </td>))))
+              }
                 <td> 
                    <p style={styleTextTable}>{pasien.status}</p>
                 </td>

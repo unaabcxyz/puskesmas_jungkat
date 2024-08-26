@@ -1,6 +1,6 @@
 import axios from "axios";
 const axiosClient=axios.create({
-    baseURL:`https://simpuskesmasjungkat.online/api`
+    baseURL:`http://127.0.0.1:8000/api`
 });
 axiosClient.interceptors.request.use((config)=>{
     const token = localStorage.getItem('ACCESS_TOKEN')

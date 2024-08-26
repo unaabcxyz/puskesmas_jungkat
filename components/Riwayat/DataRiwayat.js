@@ -1,10 +1,10 @@
 import axiosClient from "@/pages/api/axios.client";
 import { useEffect, useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
-import DatePicker from "react-datepicker";
 import { useDispatch } from "react-redux";
 import Pasien from "./Pasien";
 import * as ExcelJS from 'exceljs/dist/exceljs.min.js';
+const Swal = require('sweetalert2')
 function DataRiwayat({formValue,listRiwayat,matches}){
   const dispatch = useDispatch();
   const [logo,setLogo]=useState();
@@ -15,10 +15,26 @@ function DataRiwayat({formValue,listRiwayat,matches}){
     }
   },[])
   const cariRiwayat=()=>{ 
-    axiosClient.post('Riwayat/getData',formValue).then(({data})=>{
-      console.log(data)
-      dispatch({type:'ISI_DATA_LIST_RIWAYAT',dataPasien:data})
-    })
+    Swal.showLoading();
+    setTimeout(()=>{
+      axiosClient.post('Riwayat/getData',formValue).then(({data})=>{
+        console.log(data)
+        dispatch({type:'ISI_DATA_LIST_RIWAYAT',dataPasien:data});
+        Swal.close();
+      }).catch(function(error){ 
+          console.log(error)
+          var response = error.status;
+          if(response==500){
+            Swal.close();
+            Swal.fire({
+              icon: "error",
+              title: "Login Gagal",
+              text: "Data Gagal",
+            });
+          }
+      })
+    },2000)
+    // Swal.close();
   }
   const toDataURL = (url) => {
     const promise = new Promise((resolve, reject) => {
@@ -34,6 +50,7 @@ function DataRiwayat({formValue,listRiwayat,matches}){
     return promise;
   }
   const exportExcelTrigger=(event)=>{
+    Swal.showLoading();
     var m;
     // swalLoadingFunc();
     logo.then(result=>{
@@ -42,7 +59,7 @@ function DataRiwayat({formValue,listRiwayat,matches}){
     setTimeout(()=>{
        exportExcelFile(m)
     },15000)
-}
+  }
   const exportExcelFile=(logo)=>{
     const workbook= new ExcelJS.Workbook();
     var sheet=[];
@@ -107,7 +124,7 @@ function DataRiwayat({formValue,listRiwayat,matches}){
       bottom: {style:'thin'},
       right: {style:'thin'}
     };
-    sheet[0].getCell('F5').value="Status";
+    sheet[0].getCell('F5').value="Diagnosis";
     sheet[0].getCell('F5').font={name: 'Times New Roman', family: 4, size: 10,bold: false}
     sheet[0].getCell('F5').alignment ={vertical:"middle",horizontal:"center"};
     sheet[0].getCell('F5').border = {
@@ -116,10 +133,19 @@ function DataRiwayat({formValue,listRiwayat,matches}){
       bottom: {style:'thin'},
       right: {style:'thin'}
     };
-    sheet[0].getCell('G5').value="Biaya";
+    sheet[0].getCell('G5').value="Status";
     sheet[0].getCell('G5').font={name: 'Times New Roman', family: 4, size: 10,bold: false}
     sheet[0].getCell('G5').alignment ={vertical:"middle",horizontal:"center"};
     sheet[0].getCell('G5').border = {
+      top: {style:'thin'},
+      left: {style:'thin'},
+      bottom: {style:'thin'},
+      right: {style:'thin'}
+    };
+    sheet[0].getCell('H5').value="Biaya";
+    sheet[0].getCell('H5').font={name: 'Times New Roman', family: 4, size: 10,bold: false}
+    sheet[0].getCell('H5').alignment ={vertical:"middle",horizontal:"center"};
+    sheet[0].getCell('H5').border = {
       top: {style:'thin'},
       left: {style:'thin'},
       bottom: {style:'thin'},
@@ -154,7 +180,19 @@ function DataRiwayat({formValue,listRiwayat,matches}){
         bottom: {style:'thin'},
         right: {style:'thin'}
     };
-      sheet[0].getCell('F'+(index+6).toString()).value=riwayat.status;
+      var diagnosis='';
+      if(riwayat.pelayanan=="poli gizi"){
+        diagnosis=riwayat.diagnosis_poli_gizi;
+      }else if(riwayat.pelayanan=="poli umum"){
+        diagnosis=riwayat.diagnosis_poli_umum;
+      }else if(riwayat.pelayanan=='poli gigi'){
+        diagnosis=riwayat.diagnosis_poli_gigi;
+      }else if(riwayat.pelayanan=='IGD'){
+        diagnosis=riwayat.diagnosis_igd;
+      }else{ 
+        diagnosis=riwayat.diagnosis_kiakb;
+      }
+      sheet[0].getCell('F'+(index+6).toString()).value=diagnosis;
       sheet[0].getCell('F'+(index+6).toString()).font={name: 'Times New Roman', family: 4, size: 10,bold: false}
       sheet[0].getCell('F'+(index+6).toString()).alignment ={vertical:"middle",horizontal:"center"};
       sheet[0].getCell('F'+(index+6).toString()).border = {
@@ -163,10 +201,20 @@ function DataRiwayat({formValue,listRiwayat,matches}){
         bottom: {style:'thin'},
         right: {style:'thin'}
     };
-      sheet[0].getCell('G'+(index+6).toString()).value=riwayat.harga;
+      // if(riwayat.)
+      sheet[0].getCell('G'+(index+6).toString()).value=riwayat.status;
       sheet[0].getCell('G'+(index+6).toString()).font={name: 'Times New Roman', family: 4, size: 10,bold: false}
       sheet[0].getCell('G'+(index+6).toString()).alignment ={vertical:"middle",horizontal:"center"};
       sheet[0].getCell('G'+(index+6).toString()).border = {
+        top: {style:'thin'},
+        left: {style:'thin'},
+        bottom: {style:'thin'},
+        right: {style:'thin'}
+    };
+      sheet[0].getCell('H'+(index+6).toString()).value=riwayat.harga;
+      sheet[0].getCell('H'+(index+6).toString()).font={name: 'Times New Roman', family: 4, size: 10,bold: false}
+      sheet[0].getCell('H'+(index+6).toString()).alignment ={vertical:"middle",horizontal:"center"};
+      sheet[0].getCell('H'+(index+6).toString()).border = {
         top: {style:'thin'},
         left: {style:'thin'},
         bottom: {style:'thin'},
@@ -189,7 +237,9 @@ function DataRiwayat({formValue,listRiwayat,matches}){
         anchor.click();
         window.URL.revokeObjectURL(url);
         // swalLoading.close();
+        Swal.close();
     });
+    // Swal.close();
   }
   const getNamaBulan=(moon)=>{
     var result=""
@@ -302,11 +352,11 @@ function DataRiwayat({formValue,listRiwayat,matches}){
             </div>
         </div>
         <table className="table w-100" >
-            {
-              listRiwayat.map((pasien,index)=>(
+            {listRiwayat.length>0?(listRiwayat.map((pasien,index)=>(
                 <Pasien pasien={pasien} index={index} matches={matches}/>
-              ))
-            }
+              ))):(<tr>
+                  <td><h1 className="text-center fw-bold mt-4">Data Riwayat Tidak Ditemukan</h1></td>
+              </tr>)}
         </table>
     </div>
    

@@ -8,6 +8,7 @@ import { useRef } from "react";
 import { useAuth } from "@/lib/hooks/auth";
 import useDeviceSize from "@/components/UseDevice/useDeviceSize";
 import DetilDataPasien from "@/components/PoliGigi/DetilDataPasien";
+import * as ExcelJS from 'exceljs/dist/exceljs.min.js';
 const Swal = require('sweetalert2')
 import Master from "@/pages/Auth/Master";
 import Header from "@/pages/Auth/Header";
@@ -112,6 +113,10 @@ const DetilPasien=({id,authorization})=>{
   })
   const [toggleMenu,setToggleMenu]=useState(1);
   useEffect(()=>{
+    var image=imagaBase;
+    if(image!==null){ 
+      setLogo(image);
+    }
     if(pilihPasien!=null){
       if(pilihPasien.kia_kb!=null){
            if(pilihPasien.rawat_inap!=null){
@@ -408,6 +413,676 @@ const DetilPasien=({id,authorization})=>{
     hapusDataFunc();   
   }
     //BATAS FUNGSI CRUD
+     //Cetak  Excel
+  const [logo,setLogo]=useState();
+  const exportExcelTrigger=(event)=>{
+    Swal.showLoading();
+    var m;
+    // swalLoadingFunc();
+    logo.then(result=>{
+        m = result.base64Url;
+     });
+    setTimeout(()=>{
+       exportExcelFile(m)
+    },15000)
+  }
+  const exportExcelFile=(logo)=>{
+    console.log(pilihPasien)
+    const workbook= new ExcelJS.Workbook();
+    var sheet=[];
+    sheet[0] = workbook.addWorksheet(`Data Pasien`,{views:[ {showGridLines:false} ]})
+    const imageNew=logo.split(';');
+    const imageId = workbook.addImage({
+      base64:"data:image/png;"+imageNew[1].toString(),
+      extension: 'png',
+    });
+    sheet[0].mergeCells('C2:D2');
+    sheet[0].mergeCells('C3:D3');
+    sheet[0].mergeCells('C4:D4');
+    sheet[0].mergeCells('C5:D5');
+    
+    sheet[0].mergeCells('E2:H2');
+    sheet[0].mergeCells('E3:H3');
+    sheet[0].mergeCells('E4:H4');
+    sheet[0].mergeCells('E5:H5');
+    sheet[0].addImage(imageId,'D2:D5');
+    for (let index = 2; index <= 5; index++) {
+      if(index==2){
+        sheet[0].getCell('C'+index.toString()).border = {
+          left: {style:'thin'},
+          right: {style:'thin'},
+          top: {style:'thin'},
+        };
+        sheet[0].getCell('E'+index.toString()).border = {
+          left: {style:'thin'},
+          right: {style:'thin'},
+          top: {style:'thin'},
+        };
+      }else{
+        sheet[0].getCell('C'+index.toString()).border = {
+          left: {style:'thin'},
+          right: {style:'thin'},
+        };
+        sheet[0].getCell('E'+index.toString()).border = {
+          left: {style:'thin'},
+          right: {style:'thin'}
+        };
+      }
+     
+      
+    }
+    sheet[0].getCell('E3').value="Puskesmas Rawat Inap Jungkat";
+    sheet[0].getCell('E3').font={name: 'Calibri', family: 4, size: 18,bold: true}
+    sheet[0].getCell('E3').alignment ={vertical:"middle",horizontal:"center"};
+
+    sheet[0].getColumn(2).width=15.0;
+    sheet[0].getColumn(3).width=10.0;
+    sheet[0].getColumn(4).width=20.0;
+    sheet[0].getColumn(5).width=15.0;
+    sheet[0].getColumn(6).width=15.0;
+    
+    
+    
+    sheet[0].mergeCells('C6:D6');
+    sheet[0].getCell('C6').value="Nama Pasien";
+    sheet[0].getCell('C6').font={name: 'Times New Roman', family: 4, size: 10,bold: false}
+    sheet[0].getCell('C6').alignment ={vertical:"middle",horizontal:"left"};
+    sheet[0].getCell('C6').border = {
+        top: {style:'thin'},
+        left: {style:'thin'},
+        bottom: {style:'thin'},
+        right: {style:'thin'}
+    };
+    sheet[0].mergeCells('E6:H6');
+    sheet[0].getCell('E6').value=pilihPasien.nama_lengkap;
+    sheet[0].getCell('E6').font={name: 'Times New Roman', family: 4, size: 10,bold: false}
+    sheet[0].getCell('E6').alignment ={vertical:"middle",horizontal:"left"};
+    sheet[0].getCell('E6').border = {
+        top: {style:'thin'},
+        left: {style:'thin'},
+        bottom: {style:'thin'},
+        right: {style:'thin'}
+    };
+
+    sheet[0].mergeCells('C7:D7');
+    sheet[0].getCell('C7').value="NIK";
+    sheet[0].getCell('C7').font={name: 'Times New Roman', family: 4, size: 10,bold: false}
+    sheet[0].getCell('C7').alignment ={vertical:"middle",horizontal:"left"};
+    sheet[0].getCell('C7').border = {
+        top: {style:'thin'},
+        left: {style:'thin'},
+        bottom: {style:'thin'},
+        right: {style:'thin'}
+    };
+    sheet[0].mergeCells('E7:H7');
+    sheet[0].getCell('E7').value=pilihPasien.NIK;
+    sheet[0].getCell('E7').font={name: 'Times New Roman', family: 4, size: 10,bold: false}
+    sheet[0].getCell('E7').alignment ={vertical:"middle",horizontal:"left"};
+    sheet[0].getCell('E7').border = {
+        top: {style:'thin'},
+        left: {style:'thin'},
+        bottom: {style:'thin'},
+        right: {style:'thin'}
+    };
+
+    sheet[0].mergeCells('C8:D8');
+    sheet[0].getCell('C8').value="Alamat";
+    sheet[0].getCell('C8').font={name: 'Times New Roman', family: 4, size: 10,bold: false}
+    sheet[0].getCell('C8').alignment ={vertical:"middle",horizontal:"left"};
+    sheet[0].getCell('C8').border = {
+        top: {style:'thin'},
+        left: {style:'thin'},
+        bottom: {style:'thin'},
+        right: {style:'thin'}
+    };
+    sheet[0].mergeCells('E8:H8');
+    sheet[0].getCell('E8').value=pilihPasien.alamat_lengkap;
+    sheet[0].getCell('E8').font={name: 'Times New Roman', family: 4, size: 10,bold: false}
+    sheet[0].getCell('E8').alignment ={vertical:"middle",horizontal:"left"};
+    sheet[0].getCell('E8').border = {
+        top: {style:'thin'},
+        left: {style:'thin'},
+        bottom: {style:'thin'},
+        right: {style:'thin'}
+    };
+
+    sheet[0].mergeCells('C9:D9');
+    sheet[0].getCell('C9').value="Jenis Kelamin";
+    sheet[0].getCell('C9').font={name: 'Times New Roman', family: 4, size: 10,bold: false}
+    sheet[0].getCell('C9').alignment ={vertical:"middle",horizontal:"left"};
+    sheet[0].getCell('C9').border = {
+        top: {style:'thin'},
+        left: {style:'thin'},
+        bottom: {style:'thin'},
+        right: {style:'thin'}
+    };
+    sheet[0].mergeCells('E9:H9');
+    sheet[0].getCell('E9').value=pilihPasien.jenis_kelamin;
+    sheet[0].getCell('E9').font={name: 'Times New Roman', family: 4, size: 10,bold: false}
+    sheet[0].getCell('E9').alignment ={vertical:"middle",horizontal:"left"};
+    sheet[0].getCell('E9').border = {
+        top: {style:'thin'},
+        left: {style:'thin'},
+        bottom: {style:'thin'},
+        right: {style:'thin'}
+    };
+
+    sheet[0].mergeCells('C10:D10');
+    sheet[0].getCell('C10').value="Nomor Telepon";
+    sheet[0].getCell('C10').font={name: 'Times New Roman', family: 4, size: 10,bold: false}
+    sheet[0].getCell('C10').alignment ={vertical:"middle",horizontal:"left"};
+    sheet[0].getCell('C10').border = {
+        top: {style:'thin'},
+        left: {style:'thin'},
+        bottom: {style:'thin'},
+        right: {style:'thin'}
+    };
+    sheet[0].mergeCells('E10:H10');
+    sheet[0].getCell('E10').value=pilihPasien.no_telepon;
+    sheet[0].getCell('E10').font={name: 'Times New Roman', family: 4, size: 10,bold: false}
+    sheet[0].getCell('E10').alignment ={vertical:"middle",horizontal:"left"};
+    sheet[0].getCell('E10').border = {
+        top: {style:'thin'},
+        left: {style:'thin'},
+        bottom: {style:'thin'},
+        right: {style:'thin'}
+    };
+
+    sheet[0].mergeCells('C11:D11');
+    sheet[0].getCell('C11').value="Tanggal Lahir";
+    sheet[0].getCell('C11').font={name: 'Times New Roman', family: 4, size: 10,bold: false}
+    sheet[0].getCell('C11').alignment ={vertical:"middle",horizontal:"left"};
+    sheet[0].getCell('C11').border = {
+        top: {style:'thin'},
+        left: {style:'thin'},
+        bottom: {style:'thin'},
+        right: {style:'thin'}
+    };
+    sheet[0].mergeCells('E11:H11');
+    sheet[0].getCell('E11').value=pilihPasien.tanggal_lahir;
+    sheet[0].getCell('E11').font={name: 'Times New Roman', family: 4, size: 10,bold: false}
+    sheet[0].getCell('E11').alignment ={vertical:"middle",horizontal:"left"};
+    sheet[0].getCell('E11').border = {
+        top: {style:'thin'},
+        left: {style:'thin'},
+        bottom: {style:'thin'},
+        right: {style:'thin'}
+    };
+
+    sheet[0].mergeCells('C12:D12');
+    sheet[0].getCell('C12').value="Nomor BPJS";
+    sheet[0].getCell('C12').font={name: 'Times New Roman', family: 4, size: 10,bold: false}
+    sheet[0].getCell('C12').alignment ={vertical:"middle",horizontal:"left"};
+    sheet[0].getCell('C12').border = {
+        top: {style:'thin'},
+        left: {style:'thin'},
+        bottom: {style:'thin'},
+        right: {style:'thin'}
+    };
+    sheet[0].mergeCells('E12:H12');
+    sheet[0].getCell('E12').value=pilihPasien.no_bpjs;
+    sheet[0].getCell('E12').font={name: 'Times New Roman', family: 4, size: 10,bold: false}
+    sheet[0].getCell('E12').alignment ={vertical:"middle",horizontal:"left"};
+    sheet[0].getCell('E12').border = {
+        top: {style:'thin'},
+        left: {style:'thin'},
+        bottom: {style:'thin'},
+        right: {style:'thin'}
+    };
+
+    sheet[0].mergeCells('C13:D13');
+    sheet[0].getCell('C13').value="Biaya";
+    sheet[0].getCell('C13').font={name: 'Times New Roman', family: 4, size: 10,bold: false}
+    sheet[0].getCell('C13').alignment ={vertical:"middle",horizontal:"left"};
+    sheet[0].getCell('C13').border = {
+        top: {style:'thin'},
+        left: {style:'thin'},
+        bottom: {style:'thin'},
+        right: {style:'thin'}
+    };
+    sheet[0].mergeCells('E13:H13');
+    sheet[0].getCell('E13').value=pilihPasien.harga;
+    sheet[0].getCell('E13').font={name: 'Times New Roman', family: 4, size: 10,bold: false}
+    sheet[0].getCell('E13').alignment ={vertical:"middle",horizontal:"left"};
+    sheet[0].getCell('E13').border = {
+        top: {style:'thin'},
+        left: {style:'thin'},
+        bottom: {style:'thin'},
+        right: {style:'thin'}
+    };
+
+    sheet[0].mergeCells('C14:D14');
+    sheet[0].getCell('C14').value="Poliklinik";
+    sheet[0].getCell('C14').font={name: 'Times New Roman', family: 4, size: 10,bold: false}
+    sheet[0].getCell('C14').alignment ={vertical:"middle",horizontal:"left"};
+    sheet[0].getCell('C14').border = {
+        top: {style:'thin'},
+        left: {style:'thin'},
+        bottom: {style:'thin'},
+        right: {style:'thin'}
+    };
+    sheet[0].mergeCells('E14:H14');
+    sheet[0].getCell('E14').value=pilihPasien.tujuan_poliklinik;
+    sheet[0].getCell('E14').font={name: 'Times New Roman', family: 4, size: 10,bold: false}
+    sheet[0].getCell('E14').alignment ={vertical:"middle",horizontal:"left"};
+    sheet[0].getCell('E14').border = {
+        top: {style:'thin'},
+        left: {style:'thin'},
+        bottom: {style:'thin'},
+        right: {style:'thin'}
+    };
+
+    sheet[0].mergeCells('C15:D15');
+    sheet[0].getCell('C15').value="Keluhan Utama";
+    sheet[0].getCell('C15').font={name: 'Times New Roman', family: 4, size: 10,bold: false}
+    sheet[0].getCell('C15').alignment ={vertical:"middle",horizontal:"left"};
+    sheet[0].getCell('C15').border = {
+        top: {style:'thin'},
+        left: {style:'thin'},
+        bottom: {style:'thin'},
+        right: {style:'thin'}
+    };
+    sheet[0].mergeCells('E15:H15');
+    sheet[0].getCell('E15').value=pilihPasien.keluhan_utama;
+    sheet[0].getCell('E15').font={name: 'Times New Roman', family: 4, size: 10,bold: false}
+    sheet[0].getCell('E15').alignment ={vertical:"middle",horizontal:"left"};
+    sheet[0].getCell('E15').border = {
+        top: {style:'thin'},
+        left: {style:'thin'},
+        bottom: {style:'thin'},
+        right: {style:'thin'}
+    };
+
+    sheet[0].mergeCells('C16:D16');
+    sheet[0].getCell('C16').value="Riwayat Pengobatan Operasi";
+    sheet[0].getCell('C16').font={name: 'Times New Roman', family: 4, size: 10,bold: false}
+    sheet[0].getCell('C16').alignment ={vertical:"middle",horizontal:"left"};
+    sheet[0].getCell('C16').border = {
+        top: {style:'thin'},
+        left: {style:'thin'},
+        bottom: {style:'thin'},
+        right: {style:'thin'}
+    };
+    sheet[0].mergeCells('E16:H16');
+    sheet[0].getCell('E16').value=pilihPasien.riwayat_pengobatan_operasi;
+    sheet[0].getCell('E16').font={name: 'Times New Roman', family: 4, size: 10,bold: false}
+    sheet[0].getCell('E16').alignment ={vertical:"middle",horizontal:"left"};
+    sheet[0].getCell('E16').border = {
+        top: {style:'thin'},
+        left: {style:'thin'},
+        bottom: {style:'thin'},
+        right: {style:'thin'}
+    };
+
+    sheet[0].mergeCells('C17:D17');
+    sheet[0].getCell('C17').value="Riwayat Penyakit Keluarga";
+    sheet[0].getCell('C17').font={name: 'Times New Roman', family: 4, size: 10,bold: false}
+    sheet[0].getCell('C17').alignment ={vertical:"middle",horizontal:"left"};
+    sheet[0].getCell('C17').border = {
+        top: {style:'thin'},
+        left: {style:'thin'},
+        bottom: {style:'thin'},
+        right: {style:'thin'}
+    };
+    sheet[0].mergeCells('E17:H17');
+    sheet[0].getCell('E17').value=pilihPasien.riwayat_penyakit_keluarga;
+    sheet[0].getCell('E17').font={name: 'Times New Roman', family: 4, size: 10,bold: false}
+    sheet[0].getCell('E17').alignment ={vertical:"middle",horizontal:"left"};
+    sheet[0].getCell('E17').border = {
+        top: {style:'thin'},
+        left: {style:'thin'},
+        bottom: {style:'thin'},
+        right: {style:'thin'}
+    };
+    if(pilihPasien.rawat_inap!==null){
+      sheet[0].mergeCells('C18:H18');
+      sheet[0].getCell('C18').value='Rawat Inap';
+      sheet[0].getCell('C18').font={name: 'Times New Roman', family: 4, size: 10,bold: false}
+      sheet[0].getCell('C18').alignment ={vertical:"middle",horizontal:"left"};
+      sheet[0].getCell('C18').border = {
+          top: {style:'thin'},
+          left: {style:'thin'},
+          bottom: {style:'thin'},
+          right: {style:'thin'}
+      };
+
+      sheet[0].mergeCells('C19:D19');
+      sheet[0].getCell('C19').value='Diagnosis Pengobatan';
+      sheet[0].getCell('C19').font={name: 'Times New Roman', family: 4, size: 10,bold: false}
+      sheet[0].getCell('C19').alignment ={vertical:"middle",horizontal:"left"};
+      sheet[0].getCell('C19').border = {
+          top: {style:'thin'},
+          left: {style:'thin'},
+          bottom: {style:'thin'},
+          right: {style:'thin'}
+      };
+      sheet[0].mergeCells('E19:H19');
+      sheet[0].getCell('E19').value=pilihPasien.rawat_inap.diagnosis_pengobatan;
+      sheet[0].getCell('E19').font={name: 'Times New Roman', family: 4, size: 10,bold: false}
+      sheet[0].getCell('E19').alignment ={vertical:"middle",horizontal:"left"};
+      sheet[0].getCell('E19').border = {
+          top: {style:'thin'},
+          left: {style:'thin'},
+          bottom: {style:'thin'},
+          right: {style:'thin'}
+      };
+
+      sheet[0].mergeCells('C20:D20');
+      sheet[0].getCell('C20').value='Tanggal Rawat Inap';
+      sheet[0].getCell('C20').font={name: 'Times New Roman', family: 4, size: 10,bold: false}
+      sheet[0].getCell('C20').alignment ={vertical:"middle",horizontal:"left"};
+      sheet[0].getCell('C20').border = {
+          top: {style:'thin'},
+          left: {style:'thin'},
+          bottom: {style:'thin'},
+          right: {style:'thin'}
+      };
+      sheet[0].mergeCells('E20:H20');
+      sheet[0].getCell('E20').value=pilihPasien.rawat_inap.tanggal_rawat_inap;
+      sheet[0].getCell('E20').font={name: 'Times New Roman', family: 4, size: 10,bold: false}
+      sheet[0].getCell('E20').alignment ={vertical:"middle",horizontal:"left"};
+      sheet[0].getCell('E20').border = {
+          top: {style:'thin'},
+          left: {style:'thin'},
+          bottom: {style:'thin'},
+          right: {style:'thin'}
+      };
+
+      sheet[0].mergeCells('C21:D21');
+      sheet[0].getCell('C21').value='Tanggal Pulang';
+      sheet[0].getCell('C21').font={name: 'Times New Roman', family: 4, size: 10,bold: false}
+      sheet[0].getCell('C21').alignment ={vertical:"middle",horizontal:"left"};
+      sheet[0].getCell('C21').border = {
+          top: {style:'thin'},
+          left: {style:'thin'},
+          bottom: {style:'thin'},
+          right: {style:'thin'}
+      };
+      sheet[0].mergeCells('E21:H21');
+      sheet[0].getCell('E21').value=pilihPasien.rawat_inap.tanggal_pulang;
+      sheet[0].getCell('E21').font={name: 'Times New Roman', family: 4, size: 10,bold: false}
+      sheet[0].getCell('E21').alignment ={vertical:"middle",horizontal:"left"};
+      sheet[0].getCell('E21').border = {
+          top: {style:'thin'},
+          left: {style:'thin'},
+          bottom: {style:'thin'},
+          right: {style:'thin'}
+      };
+      if(pilihPasien.rujuk!=null){
+        sheet[0].mergeCells('C22:D22');
+        sheet[0].getCell('C22').value='Nama Rujuk';
+        sheet[0].getCell('C22').font={name: 'Times New Roman', family: 4, size: 10,bold: false}
+        sheet[0].getCell('C22').alignment ={vertical:"middle",horizontal:"left"};
+        sheet[0].getCell('C22').border = {
+            top: {style:'thin'},
+            left: {style:'thin'},
+            bottom: {style:'thin'},
+            right: {style:'thin'}
+        };
+        sheet[0].mergeCells('E22:H22');
+        sheet[0].getCell('E22').value=pilihPasien.rujuk.nama_rujuk;
+        sheet[0].getCell('E22').font={name: 'Times New Roman', family: 4, size: 10,bold: false}
+        sheet[0].getCell('E22').alignment ={vertical:"middle",horizontal:"left"};
+        sheet[0].getCell('E22').border = {
+            top: {style:'thin'},
+            left: {style:'thin'},
+            bottom: {style:'thin'},
+            right: {style:'thin'}
+        };
+
+        sheet[0].mergeCells('C23:D23');
+        sheet[0].getCell('C23').value='Tanggal Rujuk';
+        sheet[0].getCell('C23').font={name: 'Times New Roman', family: 4, size: 10,bold: false}
+        sheet[0].getCell('C23').alignment ={vertical:"middle",horizontal:"left"};
+        sheet[0].getCell('C23').border = {
+            top: {style:'thin'},
+            left: {style:'thin'},
+            bottom: {style:'thin'},
+            right: {style:'thin'}
+        };
+        sheet[0].mergeCells('E23:H23');
+        sheet[0].getCell('E23').value=pilihPasien.rujuk.tanggal_rujuk;
+        sheet[0].getCell('E23').font={name: 'Times New Roman', family: 4, size: 10,bold: false}
+        sheet[0].getCell('E23').alignment ={vertical:"middle",horizontal:"left"};
+        sheet[0].getCell('E23').border = {
+            top: {style:'thin'},
+            left: {style:'thin'},
+            bottom: {style:'thin'},
+            right: {style:'thin'}
+        };
+      }
+    }else if(pilihPasien.rujuk!==null){
+      sheet[0].mergeCells('C18:H18');
+      sheet[0].getCell('C18').value='Rujuk';
+      sheet[0].getCell('C18').font={name: 'Times New Roman', family: 4, size: 10,bold: false}
+      sheet[0].getCell('C18').alignment ={vertical:"middle",horizontal:"left"};
+      sheet[0].getCell('C18').border = {
+          top: {style:'thin'},
+          left: {style:'thin'},
+          bottom: {style:'thin'},
+          right: {style:'thin'}
+      };
+
+      sheet[0].mergeCells('C19:D19');
+      sheet[0].getCell('C19').value='Diagnosis Pengobatan';
+      sheet[0].getCell('C19').font={name: 'Times New Roman', family: 4, size: 10,bold: false}
+      sheet[0].getCell('C19').alignment ={vertical:"middle",horizontal:"left"};
+      sheet[0].getCell('C19').border = {
+          top: {style:'thin'},
+          left: {style:'thin'},
+          bottom: {style:'thin'},
+          right: {style:'thin'}
+      };
+      sheet[0].mergeCells('E19:H19');
+      sheet[0].getCell('E19').value=pilihPasien.kia_kb.diagnosis_pengobatan;
+      sheet[0].getCell('E19').font={name: 'Times New Roman', family: 4, size: 10,bold: false}
+      sheet[0].getCell('E19').alignment ={vertical:"middle",horizontal:"left"};
+      sheet[0].getCell('E19').border = {
+          top: {style:'thin'},
+          left: {style:'thin'},
+          bottom: {style:'thin'},
+          right: {style:'thin'}
+      };
+
+      sheet[0].mergeCells('C20:D20');
+      sheet[0].getCell('C20').value='Nama Rujuk';
+      sheet[0].getCell('C20').font={name: 'Times New Roman', family: 4, size: 10,bold: false}
+      sheet[0].getCell('C20').alignment ={vertical:"middle",horizontal:"left"};
+      sheet[0].getCell('C20').border = {
+          top: {style:'thin'},
+          left: {style:'thin'},
+          bottom: {style:'thin'},
+          right: {style:'thin'}
+      };
+      sheet[0].mergeCells('E20:H20');
+      sheet[0].getCell('E20').value=pilihPasien.rujuk.nama_rujuk;
+      sheet[0].getCell('E20').font={name: 'Times New Roman', family: 4, size: 10,bold: false}
+      sheet[0].getCell('E20').alignment ={vertical:"middle",horizontal:"left"};
+      sheet[0].getCell('E20').border = {
+          top: {style:'thin'},
+          left: {style:'thin'},
+          bottom: {style:'thin'},
+          right: {style:'thin'}
+      };
+
+      sheet[0].mergeCells('C21:D21');
+      sheet[0].getCell('C21').value='Tanggal Rujuk';
+      sheet[0].getCell('C21').font={name: 'Times New Roman', family: 4, size: 10,bold: false}
+      sheet[0].getCell('C21').alignment ={vertical:"middle",horizontal:"left"};
+      sheet[0].getCell('C21').border = {
+          top: {style:'thin'},
+          left: {style:'thin'},
+          bottom: {style:'thin'},
+          right: {style:'thin'}
+      };
+      sheet[0].mergeCells('E21:H21');
+      sheet[0].getCell('E21').value=pilihPasien.rujuk.tanggal_rujuk;
+      sheet[0].getCell('E21').font={name: 'Times New Roman', family: 4, size: 10,bold: false}
+      sheet[0].getCell('E21').alignment ={vertical:"middle",horizontal:"left"};
+      sheet[0].getCell('E21').border = {
+          top: {style:'thin'},
+          left: {style:'thin'},
+          bottom: {style:'thin'},
+          right: {style:'thin'}
+      };
+    }else{
+      sheet[0].mergeCells('C18:H18');
+      sheet[0].getCell('C18').value='Rawat Jalan';
+      sheet[0].getCell('C18').font={name: 'Times New Roman', family: 4, size: 10,bold: false}
+      sheet[0].getCell('C18').alignment ={vertical:"middle",horizontal:"left"};
+      sheet[0].getCell('C18').border = {
+          top: {style:'thin'},
+          left: {style:'thin'},
+          bottom: {style:'thin'},
+          right: {style:'thin'}
+      };
+
+      sheet[0].mergeCells('C19:D19');
+      sheet[0].getCell('C19').value='Diagnosis Pengobatan';
+      sheet[0].getCell('C19').font={name: 'Times New Roman', family: 4, size: 10,bold: false}
+      sheet[0].getCell('C19').alignment ={vertical:"middle",horizontal:"left"};
+      sheet[0].getCell('C19').border = {
+          top: {style:'thin'},
+          left: {style:'thin'},
+          bottom: {style:'thin'},
+          right: {style:'thin'}
+      };
+      sheet[0].mergeCells('E19:H19');
+      sheet[0].getCell('E19').value=pilihPasien.kia_kb.diagnosis_pengobatan;
+      sheet[0].getCell('E19').font={name: 'Times New Roman', family: 4, size: 10,bold: false}
+      sheet[0].getCell('E19').alignment ={vertical:"middle",horizontal:"left"};
+      sheet[0].getCell('E19').border = {
+          top: {style:'thin'},
+          left: {style:'thin'},
+          bottom: {style:'thin'},
+          right: {style:'thin'}
+      };
+
+      
+
+      sheet[0].mergeCells('C20:D20');
+      sheet[0].getCell('C20').value='Diagnosis';
+      sheet[0].getCell('C20').font={name: 'Times New Roman', family: 4, size: 10,bold: false}
+      sheet[0].getCell('C20').alignment ={vertical:"middle",horizontal:"left"};
+      sheet[0].getCell('C20').border = {
+          top: {style:'thin'},
+          left: {style:'thin'},
+          bottom: {style:'thin'},
+          right: {style:'thin'}
+      };
+      sheet[0].mergeCells('E20:H20');
+      sheet[0].getCell('E20').value=pilihPasien.kia_kb.diagnosis;
+      sheet[0].getCell('E20').font={name: 'Times New Roman', family: 4, size: 10,bold: false}
+      sheet[0].getCell('E20').alignment ={vertical:"middle",horizontal:"left"};
+      sheet[0].getCell('E20').border = {
+          top: {style:'thin'},
+          left: {style:'thin'},
+          bottom: {style:'thin'},
+          right: {style:'thin'}
+      };
+
+      sheet[0].mergeCells('C21:D21');
+      sheet[0].getCell('C21').value='Resep Obat';
+      sheet[0].getCell('C21').font={name: 'Times New Roman', family: 4, size: 10,bold: false}
+      sheet[0].getCell('C21').alignment ={vertical:"middle",horizontal:"left"};
+      sheet[0].getCell('C21').border = {
+          top: {style:'thin'},
+          left: {style:'thin'},
+          bottom: {style:'thin'},
+          right: {style:'thin'}
+      };
+      sheet[0].mergeCells('E21:H21');
+      sheet[0].getCell('E21').value=pilihPasien.kia_kb.resep_obat;
+      sheet[0].getCell('E21').font={name: 'Times New Roman', family: 4, size: 10,bold: false}
+      sheet[0].getCell('E21').alignment ={vertical:"middle",horizontal:"left"};
+      sheet[0].getCell('E21').border = {
+          top: {style:'thin'},
+          left: {style:'thin'},
+          bottom: {style:'thin'},
+          right: {style:'thin'}
+      };
+    }
+    const d = new Date();
+    var arrDate = d.toString().split(" ");
+    var moon = getNamaBulan(arrDate[1])
+    workbook.xlsx.writeBuffer().then(function (data) {
+        const blob = new Blob([data], {
+          type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        });
+        const url = window.URL.createObjectURL(blob);
+        const anchor = document.createElement("a");
+        anchor.href = url;
+
+        anchor.download = `cetakRiwayat(${arrDate[2]}-${moon}-${arrDate[3]}-${arrDate[4]}).xlsx`;
+        anchor.click();
+        window.URL.revokeObjectURL(url);
+        // swalLoading.close();
+    });
+    Swal.close();
+  }
+  const getNamaBulan=(moon)=>{
+    var result=""
+    switch (moon.toLowerCase()) {
+        case 'jan':
+             result ="Januari";
+            break;
+        case 'feb':
+             result ="Februari";
+            break;
+        case 'mar':
+             result ="Maret";
+            break;
+        case 'apr':
+             result ="April";
+            break;
+        case 'may':
+             result ="Mei";
+            break;
+        case 'jun':
+             result ="Juni";
+            break;
+        case 'jul':
+             result = "Juli";
+            break;
+        case 'aug':
+             result ="Agustus";
+            break;
+        case 'sep':
+             result ="September";
+            break;
+        case 'oct':
+             result ="Oktober";
+            break;
+        case 'nov':
+             result ="November";
+            break;
+        case 'dec':
+             result ="Desember";
+            break;
+
+        default:
+            result = "none";;
+            break;
+    }
+    return result;
+}
+  const toDataURL = (url) => {
+    const promise = new Promise((resolve, reject) => {
+        axiosClient.get(url,{responseType: 'blob'}).then((data)=>{
+            var reader = new FileReader();
+            reader.readAsDataURL(data.data);
+            reader.onloadend = function () {
+            resolve({ base64Url: reader.result });
+            };
+        });
+
+    });
+    return promise;
+  }
+  const imagaBase = async () => {
+    const a = await toDataURL('/Riwayat/getLogoPuskesmas');
+    return a;
+  };
     return(
       admin.id>0?(
         <div>
@@ -472,15 +1147,20 @@ const DetilPasien=({id,authorization})=>{
                                   {
                                     pilihPasien!=null?(
                                         pilihPasien.kia_kb==null?(
-                                          <button className="btn btn-primary" onClick={tambahDataKiaKb}>Tambah Data KIA/KB</button>
+                                          <button className="btn btn-primary" onClick={tambahDataKiaKb}>Tambah</button>
                                         ):(
                                           <div>
                                               <div className="w-25 d-inline-block me-2" >
-                                                  <button className="btn btn-success w-100" onClick={ubahDataKiaKb}>Ubah Data KIA/KB</button>
+                                                  <button className="btn btn-success w-100" onClick={ubahDataKiaKb}>Ubah</button>
                                               </div>
                                               <div className=" d-inline-block" style={{width:"30%"}} >
-                                                     <button className="btn btn-danger w-100" onClick={hapusDataKiaKb}>Hapus Data KIA/KB</button>
+                                                     <button className="btn btn-danger w-100" onClick={hapusDataKiaKb}>Hapus</button>
                                               </div>
+                                              <div className="d-inline-block " style={{width:"40%"}}>
+                                                <div style={{width:'fit-content'}} className="ms-auto ">
+                                                    <button className="btn-info btn text-light"  onClick={exportExcelTrigger}>Cetak</button>
+                                                </div>
+                                            </div> 
                                           </div>                                        
                                         )
                                     ):(null)
